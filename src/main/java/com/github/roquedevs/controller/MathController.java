@@ -1,19 +1,17 @@
 package com.github.roquedevs.controller;
 
 import com.github.roquedevs.service.MathService;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 @RestController
-@RequestMapping("/mathService")
+@RequestMapping("/math")
 public class MathController {
 
-    private final MathService mathService;
-
-    public MathController(MathService mathServiceService) {
-        this.mathService = mathServiceService;
-    }
+    public final MathService mathService = new MathService();
 
     @RequestMapping("/sum/{number1}/{number2}")
     public Double sum(@PathVariable("number1") String number1, @PathVariable("number2") String number2) {

@@ -4,7 +4,7 @@ public class NumberUtils {
 
     public static boolean isNumeric(String str) {
         if (str == null || str.trim().isEmpty()) return false;
-        return str.trim().replace(",", ".").matches("[+-]?\\d+(\\.\\d+)?]");
+        return str.trim().replace(",", ".").matches("[+-]?[0-9]*\\.?[0-9]+");
     }
 
     public static Double toDouble(String str) {
