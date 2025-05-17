@@ -1,6 +1,6 @@
-package com.github.roquedevs.controllers;
+package com.github.roquedevs.controller;
 
-import com.github.roquedevs.models.Greeting;
+import com.github.roquedevs.model.Greeting;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
