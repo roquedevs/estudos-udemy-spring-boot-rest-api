@@ -34,4 +34,26 @@ public class GlobalHandlerException extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public final ResponseEntity<Response> handleNotFoundException(Exception ex, WebRequest request) {
+        Response response = new Response(
+                new Date(),
+                ex.getMessage(),
+                HttpStatus.NOT_FOUND.value(),
+                request.getDescription(false)
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ResourceAlreadyExistException.class)
+    public final ResponseEntity<Response> handleConflictException(Exception ex, WebRequest request) {
+        Response response = new Response(
+                new Date(),
+                ex.getMessage(),
+                HttpStatus.CONFLICT.value(),
+                request.getDescription(false)
+        );
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
 }

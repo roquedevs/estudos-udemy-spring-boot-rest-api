@@ -1,56 +1,60 @@
 package com.github.roquedevs.service;
 
+import com.github.roquedevs.exception.ResourceAlreadyExistException;
+import com.github.roquedevs.exception.ResourceNotFoundException;
 import com.github.roquedevs.model.Person;
+import com.github.roquedevs.repository.PersonRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 @Service
 public class PersonService {
 
-    private static final AtomicLong counter = new AtomicLong();
+    @Autowired
+    private PersonRepository repository;
+
     private static final Logger log = Logger.getLogger(PersonService.class.getName());
 
-    public Person findById(String id) {
+    public Person findById(Long id) {
         log.info("Finding person by id: " + id);
-        return mockPerson(0);
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Person not found with id: " + id));
     }
 
     public List<Person> findAll() {
         log.info("Finding all persons");
-        List<Person> persons = new ArrayList<>();
-        for (int i = 0; i < 9; i++) {
-            Person person = mockPerson(i);
-            persons.add(person);
-        }
-        return persons;
+        return repository.findAll();
     }
 
     public Person save(Person person) {
         log.info("Saving person: " + person);
-        return person;
+        Person personFound = repository.findByEmail(person.getEmail());
+        if (personFound != null) {
+            throw new ResourceAlreadyExistException("Person with id: " + person.getId() + " already exists");
+        }
+        return repository.save(person);
     }
 
     public Person update(Person person) {
         log.info("Updating person: " + person);
-        return person;
+
+        Person foundPerson = findById(person.getId());
+        if (foundPerson == null) {
+            throw new ResourceNotFoundException("Person not found with id: " + person.getId());
+        }
+
+        foundPerson.setFirstName(person.getFirstName());
+        foundPerson.setLastName(person.getLastName());
+        foundPerson.setEmail(person.getEmail());
+        foundPerson.setPhone(person.getPhone());
+        foundPerson.setAddress(person.getAddress());
+        return repository.save(foundPerson);
     }
 
-    public void delete(String id) {
+    public void delete(Long id) {
         log.info("Deleting person by id: " + id);
-    }
-
-    private Person mockPerson(Integer id) {
-        Person person = new Person();
-        person.setId(counter.incrementAndGet());
-        person.setFirstName("John " + id);
-        person.setLastName("Doe " + id);
-        person.setEmail("john.doe" + id + "@example.com");
-        person.setPhone("(11) 23456-7890");
-        person.setAddress("Avenue de Saint Petersburg, Paris - France");
-        return person;
+        repository.deleteById(id);
     }
 }
